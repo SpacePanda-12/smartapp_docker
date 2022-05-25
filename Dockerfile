@@ -4,7 +4,7 @@ FROM debian:stretch-slim
 # Update so we can download packages
 RUN apt update
 #Set the ROS distro
-ENV ROS_DISTRO melodic
+ENV ROS_DISTRO galactic
 
 # Add the ROS keys and package
 RUN apt install -y \
@@ -45,7 +45,7 @@ RUN apt install -y \
     xterm \
     dbus-x11
 
-# Install the racecar simulator
+# Install necessary ROS packages
 RUN apt install -y \
     ros-$ROS_DISTRO-tf2-geometry-msgs \
     ros-$ROS_DISTRO-ackermann-msgs \
@@ -55,8 +55,6 @@ RUN apt install -y \
     cython
 ENV SIM_WS /opt/ros/sim_ws
 RUN mkdir -p $SIM_WS/src
-RUN git clone https://github.com/mit-racecar/racecar_simulator.git
-RUN mv racecar_simulator $SIM_WS/src
 RUN /bin/bash -c 'source /opt/ros/$ROS_DISTRO/setup.bash; cd $SIM_WS; catkin_make; catkin_make install;'
 
 # Add the ROS master
@@ -109,7 +107,7 @@ COPY ./config/default.rviz /opt/ros/$ROS_DISTRO/share/rviz/
 
 # Creat a user
 RUN useradd -ms /bin/bash racecar
-RUN echo 'racecar:racecar@mit' | chpasswd
+RUN echo 'password:user@smartapp' | chpasswd
 RUN adduser racecar sudo
-USER racecar
+USER user
 WORKDIR /home/racecar
